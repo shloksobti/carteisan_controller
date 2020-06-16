@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(cartesian_controller)
-
+set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
 
+find_package(orocos_kdl REQUIRED)
+find_package(Boost REQUIRED system)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -11,7 +13,28 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  geometry_msgs
+  kdl_parser
+  robot_controllers_interface
+  urdf
 )
+catkin_package(
+  INCLUDE_DIRS
+    include
+  CATKIN_DEPENDS
+    geometry_msgs
+    std_msgs
+    kdl_parser
+    roscpp
+    rospy
+    robot_controllers_interface
+    urdf
+  DEPENDS
+    Boost
+    orocos_kdl
+  LIBRARIES
+    cartesian_controller
+  )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -102,12 +125,12 @@ find_package(catkin REQUIRED COMPONENTS
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
+#catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES cartesian_controller
 #  CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
-)
+#)
 
 ###########
 ## Build ##
@@ -116,14 +139,25 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
-  ${catkin_INCLUDE_DIRS}
+  include
+  include/cartesian_controller
+  SYSTEM ${catkin_INCLUDE_DIRS}
+  SYSTEM ${Eigen_INCLUDE_DIRS}
+  SYSTEM ${orocos_kdl_INCLUDE_DIRS}
 )
 
+link_directories(${orocos_kdl_INCLUDE_DIRS})
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/cartesian_controller.cpp
-# )
+ #add_library(cartesian_controller src/cartesian_controller.cpp include/cartesian_controller/cartesian_controller.h)
+
+
+ #target_link_libraries(cartesian_controller
+  #${catkin_INCLUDE_DIRS}
+  #${orocos_kdl_INCLUDE_DIRS}
+ #)
+
+ add_executable(cartesian_controller src/cartesian_controller.cpp)
+ target_link_libraries(cartesian_controller ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
