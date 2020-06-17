@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   kdl_parser
   robot_controllers_interface
   urdf
+  dmp
 )
 catkin_package(
   INCLUDE_DIRS
@@ -29,6 +30,7 @@ catkin_package(
     rospy
     robot_controllers_interface
     urdf
+    dmp
   DEPENDS
     Boost
     orocos_kdl
