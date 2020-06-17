@@ -4,6 +4,7 @@ CartesianController::CartesianController() {
   initialized_ = false;
   is_active_ = false;
 
+  //joint_limits_.emplace_back(0, 0.38615); // Torso Lift Joint
   joint_limits_.emplace_back(-1.6056, 1.6056); // Shoulder Pan Joint
   joint_limits_.emplace_back(-1.221, 1.518); // Shoulder Lift Joint
   joint_limits_.emplace_back(-10000, 10000); // Upperarm Roll Joint
@@ -68,7 +69,9 @@ int CartesianController::init(ros::NodeHandle& nh) {
     std::string name = segment.getName();
     ROS_INFO("Segment Name: %s", name.c_str());
   }
-
+  
+  // Instead of this get from Unity.
+  //joint_state_.name.push_back("torso_lift_joint");
   joint_state_.name.push_back("shoulder_pan_joint");
   joint_state_.name.push_back("shoulder_lift_joint");
   joint_state_.name.push_back("upperarm_roll_joint");
@@ -76,6 +79,7 @@ int CartesianController::init(ros::NodeHandle& nh) {
   joint_state_.name.push_back("forearm_roll_joint");
   joint_state_.name.push_back("wrist_flex_joint");
   joint_state_.name.push_back("wrist_roll_joint");
+  //joint_state_.position.push_back(0);
   joint_state_.position.push_back(-2.980231954552437e-07);
   joint_state_.position.push_back(0);
   joint_state_.position.push_back(0);
@@ -83,7 +87,7 @@ int CartesianController::init(ros::NodeHandle& nh) {
   joint_state_.position.push_back(0);
   joint_state_.position.push_back(0);
   joint_state_.position.push_back(-1.1920928244535389e-07);
-  for (unsigned int i = 0; i < 7; i++) joint_state_.velocity.push_back(0);
+  for (unsigned int i = 0; i < joint_state_.name.size(); i++) joint_state_.velocity.push_back(0);
 
   initialized_ = true;
   ROS_INFO("Cartesian Controller Initialized");
@@ -165,7 +169,7 @@ void CartesianController::update(const ros::Time& now,
       }
     }
 
-    /*double max_vel = 0.0;*/
+    //double max_vel = 0.0;
     //for (unsigned int ii = 0; ii < num_joints; ++ii)
       //max_vel = std::max(std::abs(tgt_jnt_vel_(ii)), max_vel);
 
@@ -180,14 +184,14 @@ void CartesianController::update(const ros::Time& now,
       //ROS_DEBUG_THROTTLE(1.0, "Joint velocity limit reached.");
     //}
 
-    // Make sure solver didn't generate any NaNs.
-    for (unsigned ii = 0; ii < num_joints; ++ii) {
-      if (!std::isfinite(tgt_jnt_vel_(ii))) {
-        ROS_ERROR_THROTTLE(1.0, "Target joint velocity (%d) is not finite : %f",
-                           ii, tgt_jnt_vel_(ii));
-        tgt_jnt_vel_(ii) = 1.0;
-      }
-    }
+    //// Make sure solver didn't generate any NaNs.
+    //for (unsigned ii = 0; ii < num_joints; ++ii) {
+      //if (!std::isfinite(tgt_jnt_vel_(ii))) {
+        //ROS_ERROR_THROTTLE(1.0, "Target joint velocity (%d) is not finite : %f",
+                           //ii, tgt_jnt_vel_(ii));
+        //tgt_jnt_vel_(ii) = 1.0;
+      //}
+    //}
 
     //// Limit accelerations while trying to keep same resulting direction
     //// somewhere between previous and current value
