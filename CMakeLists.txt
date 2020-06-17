@@ -159,6 +159,8 @@ link_directories(${orocos_kdl_INCLUDE_DIRS})
  add_executable(cartesian_controller src/cartesian_controller.cpp)
  target_link_libraries(cartesian_controller ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
+ add_executable(recorder src/recorder.cpp)
+ target_link_libraries(recorder ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
